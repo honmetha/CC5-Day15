@@ -96,13 +96,36 @@ function main() {
         console.log(guests.join(', '));
         return;
       case 'get_guest_in_room':
-        // console.log('get_guest_in_room');
+        const [guestRoom] = command.params;
+        const guestFloor = guestRoom.toString().slice(0, -2);
+        const getGuest = hotelRooms[guestFloor][guestRoom].name;
+
+        console.log(getGuest);
         return;
       case 'list_guest_by_age':
-        // console.log('list_guest_by_age');
+        const [symbol, ageNumber] = command.params;
+        const symbols = {
+          '<': (age, ageNumber) => age < ageNumber, 
+          '>': (age, ageNumber) => age > ageNumber,
+          '=': (age, ageNumber) => age === ageNumber,
+        };
+        const allGuests = [];
+        for (const floor in hotelRooms) {
+          for (const room in hotelRooms[floor]) {
+            if (symbols[symbol](hotelRooms[floor][room].age, ageNumber)) allGuests.push(hotelRooms[floor][room].name);
+          }
+        }
+        allGuests.filter((guest, index) => allGuests.indexOf(guest) === index);
+        console.log(allGuests.join(', '));
         return;
       case 'list_guest_by_floor':
-        // console.log('list_guest_by_floor');
+        const [numberOfFloor] = command.params;
+        const guestsByFloor = [];
+        for (const room in hotelRooms[numberOfFloor]) {
+          if (hotelRooms[numberOfFloor][room].name) guestsByFloor.push(hotelRooms[numberOfFloor][room].name);
+        }
+        guestsByFloor.filter((guest, index) => guestsByFloor.indexOf(guest) === index);
+        console.log(guestsByFloor.join(', '));
         return;
       case 'checkout_guest_by_floor':
         // console.log('checkout_guest_by_floor');
