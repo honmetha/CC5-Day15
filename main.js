@@ -38,39 +38,41 @@ function main() {
         };
         keyCards.push(...Array.from({ length: (floor * roomPerFloor) }, i => i = 'available'));
 
-        console.log('hotelRooms', hotelRooms);
-        console.log('keyCards', keyCards);
+        // console.log('hotelRooms', hotelRooms);
+        // console.log('keyCards', keyCards);
 
-        // console.log(
-        //   `Hotel created with ${floor} floor(s), ${roomPerFloor} room(s) per floor.`
-        // )
+        console.log(`Hotel created with ${floor} floor(s), ${roomPerFloor} room(s) per floor.`)
         return
       case 'book':
         const [room, name, age] = command.params;
         const floorNumber = room.toString().slice(0, -2);
+
         if (hotelRooms[floorNumber][room] === 'available') {
           for (let i = 1; i <= keyCards.length; i++) {
             if (keyCards[i] === 'available') {
               const keyCard = i;
               hotelRooms[floorNumber][room] = new Guest(name, age, keyCard);
-              // console.log(`Room ${room} is booked by ${name} with keycard number ${keyCard}.`);
+              console.log(`Room ${room} is booked by ${name} with keycard number ${keyCard}.`);
               keyCards[i] = room;
-              // console.log('hotelRooms', hotelRooms);
-              // console.log('keyCards', keyCards);
               return;
             };
           };
         }
-        // else console.log(`Cannot book room ${room} for ${name}, The room is currently booked by ${hotelRooms[floorNumber][room].name}.`)
-        // console.log('hotelRooms', hotelRooms);
+        else console.log(`Cannot book room ${room} for ${name}, The room is currently booked by ${hotelRooms[floorNumber][room].name}.`)
         return;
       case 'checkout':
-        const [keyCard] = command.params;
-        const checkedOutRoom = keyCards[keyCard].toString();
+        const [cardNumber, checkoutName] = command.params;
+        const checkedOutRoom = keyCards[cardNumber].toString();
         const checkedOutFloor = checkedOutRoom.slice(0, -2);
-        hotelRooms[checkedOutFloor][checkedOutRoom] = 'available';
-        console.log(`Room ${keyCards[keyCard]} is checkout`)
-        keyCards[keyCard] = 'available';
+        const guestName = hotelRooms[checkedOutFloor][checkedOutRoom].name;
+
+        if (guestName === checkoutName) {
+          console.log(`Room ${keyCards[cardNumber]} is checkout`);
+          hotelRooms[checkedOutFloor][checkedOutRoom] = 'available';
+          keyCards[cardNumber] = 'available';
+        } else {
+          console.log(`Only ${guestName} can checkout with keycard number ${cardNumber}.`);
+        }
         return;
       case 'list_available_rooms':
         const availableRooms = [];
@@ -83,12 +85,15 @@ function main() {
         return;
       case 'list_guest':
         const guests = [];
+
         for (const floor in hotelRooms) {
           for (const room in hotelRooms[floor]) {
             if (hotelRooms[floor][room].name) guests.push(hotelRooms[floor][room].name);
           }
         }
-        console.log('[...new Set(guests)]', [...new Set(guests)]);
+
+        guests.filter((guest, index) => guests.indexOf(guest) === index);
+        console.log(guests.join(', '));
         return;
       case 'get_guest_in_room':
         // console.log('get_guest_in_room');
