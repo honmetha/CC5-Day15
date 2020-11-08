@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('fs');
 
 class Command {
   constructor(name, params) {
@@ -67,7 +67,7 @@ function main() {
         const guestName = hotelRooms[checkedOutFloor][checkedOutRoom].name;
 
         if (guestName === checkoutName) {
-          console.log(`Room ${keyCards[cardNumber]} is checkout`);
+          console.log(`Room ${keyCards[cardNumber]} is checkout.`);
           hotelRooms[checkedOutFloor][checkedOutRoom] = 'available';
           keyCards[cardNumber] = 'available';
         } else {
@@ -128,10 +128,41 @@ function main() {
         console.log(guestsByFloor.join(', '));
         return;
       case 'checkout_guest_by_floor':
-        // console.log('checkout_guest_by_floor');
+        const [checkoutFloor] = command.params;
+        const checkoutRoom = [];
+        for (const room in hotelRooms[checkoutFloor]) {
+          if (hotelRooms[checkoutFloor][room] !== 'available') {
+            const guestRoom = hotelRooms[checkoutFloor][room];
+            const keyCardNumber = guestRoom.keyCard;
+            checkoutRoom.push(room);
+            hotelRooms[checkoutFloor][room] = 'available'
+            keyCards[keyCardNumber] = 'available';
+          };
+        };
+        console.log(`Room ${checkoutRoom.join(', ')} are checkout.`);
         return;
       case 'book_by_floor':
-        // console.log('book_by_floor');
+        const [floorBook, floorBookName, floorBookAge] = command.params;
+        for (const room in hotelRooms[floorBook]) {
+          if (hotelRooms[floorBook][room] !== 'available') {
+            console.log(`Cannot book floor ${floorBook} for ${floorBookName}.`);
+            return;
+          };
+        };
+        const roomBooked = [], keyUnavailable = [];
+        for (const room in hotelRooms[floorBook]) {
+          for (let i = 1; i <= keyCards.length; i++) {
+            if (keyCards[i] === 'available') {
+              const keyCard = i;
+              hotelRooms[floorBook][room] = new Guest(floorBookName, floorBookAge, keyCard);
+              keyCards[keyCard] = room;
+              roomBooked.push(room);
+              keyUnavailable.push(keyCard)
+              break;
+            };
+          };
+        };
+        console.log(`Room ${roomBooked.join(', ')} are booked with keycard number ${keyUnavailable.join(', ')}`);
         return;
       default:
         return
