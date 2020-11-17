@@ -18,25 +18,29 @@ class Guest {
 const hotelRooms = {};
 const keyCards = ['masterKey'];
 
+const createHotel = ([floor, roomPerFloor]) => {
+  for (let i = 1; i <= floor; i++) {
+    hotelRooms[i] = {};
+    for (let j = 1; j <= roomPerFloor; j++) {
+      const roomNumber = j < 10 ? '0' + j: '' + j;
+      hotelRooms[i][i + roomNumber] = 'available';
+    };
+  };
+  keyCards.push(...Array.from({ length: (floor * roomPerFloor) }, i => i = 'available'));
+  console.log(`Hotel created with ${floor} floor(s), ${roomPerFloor} room(s) per floor.`);
+  return;
+};
+
 function main() {
   const filename = 'input.txt'
   const commands = getCommandsFromFileName(filename)
+  // console.log('commands', commands);
 
   commands.forEach(command => {
     switch (command.name) {
       case 'create_hotel':
-        const [floor, roomPerFloor] = command.params
-        // const hotel = { floor, roomPerFloor }
-        for (let i = 1; i <= floor; i++) {
-          hotelRooms[i] = {};
-          for (let j = 1; j <= roomPerFloor; j++) {
-            const roomNumber = j < 10 ? '0' + j: '' + j;
-            hotelRooms[i][i + roomNumber] = 'available';
-          };
-        };
-        keyCards.push(...Array.from({ length: (floor * roomPerFloor) }, i => i = 'available'));
-        console.log(`Hotel created with ${floor} floor(s), ${roomPerFloor} room(s) per floor.`)
-        return
+        createHotel(command.params);
+        return;
 
       case 'book':
         const [room, name, age] = command.params;
