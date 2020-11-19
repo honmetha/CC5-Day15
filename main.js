@@ -5,6 +5,9 @@ const checkout = require('./checkout');
 const listAvailableRooms = require('./listAvailableRooms');
 const listGuest = require('./listGuest');
 const getGuestInRoom = require('./getGuestInRoom');
+const listGuestByAge = require('./listGuestByAge');
+const listGuestByFloor = require('./listGuestByFloor');
+const checkoutGuestByFloor = require('./checkoutGuestByFloor');
 
 class Command {
   constructor(name, params) {
@@ -55,45 +58,15 @@ function main() {
         return;
 
       case 'list_guest_by_age':
-        const [symbol, ageNumber] = command.params;
-        const symbols = {
-          '<': (age, ageNumber) => age < ageNumber, 
-          '>': (age, ageNumber) => age > ageNumber,
-          '=': (age, ageNumber) => age === ageNumber,
-        };
-        const allGuests = [];
-        for (const floor in hotelRooms) {
-          for (const room in hotelRooms[floor]) {
-            if (symbols[symbol](hotelRooms[floor][room].age, ageNumber)) allGuests.push(hotelRooms[floor][room].name);
-          };
-        };
-        allGuests.filter((guest, index) => allGuests.indexOf(guest) === index);
-        console.log(allGuests.join(', '));
+        listGuestByAge(command.params, hotelRooms);
         return;
 
       case 'list_guest_by_floor':
-        const [numberOfFloor] = command.params;
-        const guestsByFloor = [];
-        for (const room in hotelRooms[numberOfFloor]) {
-          if (hotelRooms[numberOfFloor][room].name) guestsByFloor.push(hotelRooms[numberOfFloor][room].name);
-        };
-        guestsByFloor.filter((guest, index) => guestsByFloor.indexOf(guest) === index);
-        console.log(guestsByFloor.join(', '));
+        listGuestByFloor(command.params, hotelRooms);
         return;
 
       case 'checkout_guest_by_floor':
-        const [checkoutFloor] = command.params;
-        const checkoutRoom = [];
-        for (const room in hotelRooms[checkoutFloor]) {
-          if (hotelRooms[checkoutFloor][room] !== 'available') {
-            const guestRoom = hotelRooms[checkoutFloor][room];
-            const keyCardNumber = guestRoom.keyCard;
-            checkoutRoom.push(room);
-            hotelRooms[checkoutFloor][room] = 'available'
-            keyCards[keyCardNumber] = 'available';
-          };
-        };
-        console.log(`Room ${checkoutRoom.join(', ')} are checkout.`);
+        checkoutGuestByFloor(command.params, hotelRooms, keyCards);
         return;
 
       case 'book_by_floor':
