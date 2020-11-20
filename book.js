@@ -8,6 +8,7 @@ class Guest {
 
 const book = ([room, name, age], hotelRooms, keyCards) => {
   const floorNumber = room.toString().slice(0, -2);
+  
   if (hotelRooms[floorNumber][room] === 'available') {
     for (let i = 1; i <= keyCards.length; i++) {
       if (keyCards[i] === 'available') {

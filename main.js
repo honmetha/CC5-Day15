@@ -8,6 +8,7 @@ const getGuestInRoom = require('./getGuestInRoom');
 const listGuestByAge = require('./listGuestByAge');
 const listGuestByFloor = require('./listGuestByFloor');
 const checkoutGuestByFloor = require('./checkoutGuestByFloor');
+const bookByFloor = require('./bookByFloor');
 
 class Command {
   constructor(name, params) {
@@ -15,14 +16,6 @@ class Command {
     this.params = params
   }
 }
-
-class Guest {
-  constructor(name, age, keyCard) {
-    this.name = name;
-    this.age = age;
-    this.keyCard = keyCard;
-  };
-};
 
 const hotelRooms = {};
 const keyCards = ['masterKey'];
@@ -70,27 +63,7 @@ function main() {
         return;
 
       case 'book_by_floor':
-        const [floorBook, floorBookName, floorBookAge] = command.params;
-        for (const room in hotelRooms[floorBook]) {
-          if (hotelRooms[floorBook][room] !== 'available') {
-            console.log(`Cannot book floor ${floorBook} for ${floorBookName}.`);
-            return;
-          };
-        };
-        const roomBooked = [], keyUnavailable = [];
-        for (const room in hotelRooms[floorBook]) {
-          for (let i = 1; i <= keyCards.length; i++) {
-            if (keyCards[i] === 'available') {
-              const keyCard = i;
-              hotelRooms[floorBook][room] = new Guest(floorBookName, floorBookAge, keyCard);
-              keyCards[keyCard] = Number(room);
-              roomBooked.push(room);
-              keyUnavailable.push(keyCard)
-              break;
-            };
-          };
-        };
-        console.log(`Room ${roomBooked.join(', ')} are booked with keycard number ${keyUnavailable.join(', ')}`);
+        bookByFloor(command.params, hotelRooms, keyCards);
         return;
 
       default:

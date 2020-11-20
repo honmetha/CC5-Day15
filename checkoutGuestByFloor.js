@@ -1,5 +1,6 @@
 const checkoutGuestByFloor = ([checkoutFloor], hotelRooms, keyCards) => {
   const checkoutRoom = [];
+
   for (const room in hotelRooms[checkoutFloor]) {
     if (hotelRooms[checkoutFloor][room] !== 'available') {
       const guestRoom = hotelRooms[checkoutFloor][room];
@@ -9,6 +10,7 @@ const checkoutGuestByFloor = ([checkoutFloor], hotelRooms, keyCards) => {
       keyCards[keyCardNumber] = 'available';
     };
   };
+  
   console.log(`Room ${checkoutRoom.join(', ')} are checkout.`);
   return;
 };

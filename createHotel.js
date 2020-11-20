@@ -6,6 +6,7 @@ const createHotel = ([floor, roomPerFloor], hotelRooms, keyCards) => {
       hotelRooms[i][i + roomNumber] = 'available';
     };
   };
+  
   keyCards.push(...Array.from({ length: (floor * roomPerFloor) }, i => i = 'available'));
   console.log(`Hotel created with ${floor} floor(s), ${roomPerFloor} room(s) per floor.`);
   return;
